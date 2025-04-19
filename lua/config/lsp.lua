@@ -1,11 +1,19 @@
 require("mason").setup {}
 require("mason-lspconfig").setup {
-    ensure_installed = { "harper_ls", "lua_ls", "ts_ls", "pyright" },
+    ensure_installed = { "lua_ls", "ts_ls", "pyright" },
 }
 
 local lspconfig = require("lspconfig")
 
-lspconfig.lua_ls.setup {}
+lspconfig.lua_ls.setup {
+	settings = {
+        Lua = {
+            diagnostics = {
+                globals = { 'vim' }
+            }
+        }
+    }
+}
 lspconfig["zls"].setup {
 	config = {
     cmd = { 'zls' },
