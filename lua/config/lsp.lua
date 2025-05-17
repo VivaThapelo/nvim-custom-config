@@ -1,32 +1,34 @@
-require("mason").setup {}
+vim.lsp.config("*", {
+  capabilities = vim.lsp.protocol.make_client_capabilities()
+})
+
+require("mason").setup()
 require("mason-lspconfig").setup {
-    ensure_installed = { "lua_ls", "ts_ls", "pyright" },
+  ensure_installed = { 'lua_ls', 'ts_ls', 'harper_ls', 'pyright' }
 }
 
-local lspconfig = require("lspconfig")
+local lspconfig = require('lspconfig')
 
-lspconfig.lua_ls.setup {
-	settings = {
-        Lua = {
-            diagnostics = {
-                globals = { 'vim' }
-            }
-        }
+-- Check if zls is installed (optional, for better error handling)
+local zls_path = vim.fn.exepath('zls') -- Finds zls in $PATH
+if zls_path == '' then
+  vim.notify("zls not found in PATH! Please install it.", vim.log.levels.WARN)
+  return
+end
+
+-- Manually configure zls
+lspconfig.zls.setup({
+  cmd = { "zls" }, -- Uses the system-installed zls
+  on_attach = function(client, bufnr)
+    -- Your LSP keybindings and attach logic
+    local opts = { buffer = bufnr, silent = true }
+    vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+    vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
+  end,
+--  capabilities = require('cmp_nvim_lsp').default_capabilities(),
+  settings = {
+    zls = {
+      -- Your zls-specific settings (if any)
     }
-}
-lspconfig["zls"].setup {
-	config = {
-    cmd = { 'zls' },
-    on_new_config = function(new_config, new_root_dir)
-      if vim.fn.filereadable(vim.fs.joinpath(new_root_dir, 'zls.json')) ~= 0 then
-        new_config.cmd = { 'zls', '--config-path', 'zls.json' }
-      end
-    end,
-    filetypes = { 'zig', 'zir' },
-    root_dir = lspconfig.util.root_pattern('zls.json', 'build.zig', '.git'),
-    single_file_support = true,
-  },
-}
-lspconfig.pyright.setup {}
-lspconfig.ts_ls.setup {}
-lspconfig.harper_ls.setup {}
+  }
+})

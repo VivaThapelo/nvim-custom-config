@@ -1,7 +1,7 @@
 require('config.remaps')
 require('config.lazy')
-require('config.lsp')
 require('config.undotree')
 require('config.fugitive')
 require('config.refactoring')
 require('config.lualine')
+require('config.lsp')
