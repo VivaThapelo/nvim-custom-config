@@ -1,12 +1,14 @@
-vim.lsp.config("*", {
-  capabilities = vim.lsp.protocol.make_client_capabilities()
-})
+-- vim.lsp.config("*", {
+--	capabilities = capabilities;
+--})
 
 require("mason").setup()
 require("mason-lspconfig").setup {
-  ensure_installed = { 'lua_ls', 'ts_ls', 'harper_ls', 'pyright' }
+  ensure_installed = { 'lua_ls', 'ts_ls', 'harper_ls', 'pyright' },
 }
 
+
+--local capabilities = require('blink.cmp').get_lsp_capabilities('config.capabilities');
 local lspconfig = require('lspconfig')
 
 -- Check if zls is installed (optional, for better error handling)
@@ -25,7 +27,7 @@ lspconfig.zls.setup({
     vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
     vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
   end,
---  capabilities = require('cmp_nvim_lsp').default_capabilities(),
+  capabilities = require('blink.cmp').get_lsp_capabilities(),
   settings = {
     zls = {
       -- Your zls-specific settings (if any)
